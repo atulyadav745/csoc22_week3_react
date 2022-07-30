@@ -22,3 +22,43 @@
 .todo-task {
   max-width: 260px;
 }
+#navBar{
+  background-color: black;
+  height: 16vh;
+  
+}
+#navBar ul li a h1{
+  font-size: 2em;
+}
+body{
+  background-color: rgb(222, 225, 222);
+}
+#btn1, #btn2{
+  padding: 20px;
+}
+#btn1::after{
+  content: '';
+  width: 0%;
+  height: 2px;
+  background: #f44336;
+  display: block;
+  margin: auto;
+  transition: .5s;
+}
+#btn1:hover::after{
+  width: 100%;
+
+}
+#btn2::after{
+  content: '';
+  width: 0%;
+  height: 2px;
+  background: #f44336;
+  display: block;
+  margin: auto;
+  transition: .5s;
+}
+#btn2:hover::after{
+  width: 100%;
+
+}

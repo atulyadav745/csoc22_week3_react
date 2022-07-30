@@ -2,6 +2,9 @@ import { useEffect, useState, useContext, createContext } from 'react'
 import { useCookies } from 'react-cookie'
 import axios from '../utils/axios'
 import { useRouter } from 'next/router'
+import authRequired from '../middlewares/auth_required'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const AuthContext = createContext({})
 
@@ -11,12 +14,14 @@ export const AuthProvider = ({ children }) => {
   const [avatarImage, setAvatarImage] = useState('#')
   const [cookies, setCookies, removeCookies] = useCookies(['auth'])
   const token = cookies.token
+  authRequired();
 
   const setToken = (newToken) => setCookies('token', newToken, { path: '/' })
   const deleteToken = () => removeCookies('token')
   const logout = () => {
     deleteToken()
-    router.push('/login')
+    toast.success("Logged Out Successfully .....",{position: "bottom-right",autoClose: 2000})
+    setTimeout(()=>router.reload(),2000)
   }
 
   useEffect(() => {
@@ -28,6 +33,8 @@ export const AuthProvider = ({ children }) => {
           },
         })
         .then((response) => {
+          console.log(children);
+          console.log(response.data.name);
           setAvatarImage(
             'https://ui-avatars.com/api/?name=' +
               response.data.name +
@@ -36,26 +43,19 @@ export const AuthProvider = ({ children }) => {
           setProfileName(response.data.name)
         })
         .catch((error) => {
-          console.log('Some error occurred')
+          toast.error('Some error occurred')
         })
     }
   }, [setAvatarImage, setProfileName, token])
 
   return (
-    <AuthContext.Provider
-      value={{
-        token,
-        setToken,
-        deleteToken,
-        profileName,
-        setProfileName,
-        avatarImage,
-        setAvatarImage,
-        logout,
-      }}
-    >
+    
+    <>
+    <ToastContainer />
+    <AuthContext.Provider value={{token,setToken,deleteToken,profileName,setProfileName,avatarImage,setAvatarImage,logout,}}>
       {children}
     </AuthContext.Provider>
+    </>
   )
 }
 

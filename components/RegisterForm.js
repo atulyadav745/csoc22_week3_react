@@ -3,9 +3,15 @@ import axios from '../utils/axios'
 import { useAuth } from '../context/auth'
 import { useRouter } from 'next/router'
 
+import no_authRequired from '../middlewares/no_auth_required'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 export default function Register() {
   const { setToken } = useAuth()
   const router = useRouter()
+
+  no_authRequired();
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -27,11 +33,11 @@ export default function Register() {
       username === '' ||
       password === ''
     ) {
-      console.log('Please fill all the fields correctly.')
+      toast.warn('Please fill all the fields correctly.',{position: "bottom-right"})
       return false
     }
     if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
-      console.log('Please enter a valid email address.')
+      toast.warn('Please enter a valid email address.',{position: "bottom-right"})
       return false
     }
     return true
@@ -58,17 +64,21 @@ export default function Register() {
       )
         .then(function ({ data, status }) {
           setToken(data.token)
-          router.push('/')
+          toast.success("Registered Successfully...",{position: "top-center",autoClose: 2000})
+          setTimeout(()=>router.push('/'),2000)
         })
         .catch(function (err) {
-          console.log(
+          toast.error(
             'An account using same email or username is already created'
-          )
+            ,{position: "bottom-right"})
         })
     }
   }
 
   return (
+    <>
+
+    <ToastContainer />
     <div className='bg-grey-lighter min-h-screen flex flex-col'>
       <div className='container max-w-sm mx-auto flex-1 flex flex-col items-center justify-center px-2'>
         <div className='bg-white px-6 py-8 rounded shadow-md text-black w-full'>
@@ -132,5 +142,6 @@ export default function Register() {
         </div>
       </div>
     </div>
+    </>
   )
 }
